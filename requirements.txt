@@ -1,0 +1,19 @@
+# Diffusion Models Tutorial - Requirements
+# Python dependencies for text-to-image generation using Stable Diffusion XL
+# Pinned versions tested and verified to work together
+
+# Core ML/AI libraries
+torch==2.9.1
+diffusers==0.35.2
+transformers==4.57.3
+accelerate==1.12.0
+
+# Image processing
+Pillow==12.0.0
+
+# Utilities
+safetensors==0.7.0
+
+# Note: If you have CUDA installed, PyTorch will automatically use GPU support
+# For CPU-only installation, use: pip install torch==2.9.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
