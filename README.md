@@ -296,8 +296,7 @@ This is open source and free code. You are welcome to use, modify, and repost th
 
 ## 👤 Maintainer
 
-**Dr Giorgio Roffo**  
-Head of AI at SARA (Strategic AI Research and Application Department)
+**Dr Giorgio Roffo**
 
 *Advancing AI through Open Science and Education*
 

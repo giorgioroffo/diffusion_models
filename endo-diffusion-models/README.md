@@ -1,7 +1,6 @@
 # SARA - EndoDora: Image-Conditioned, Text-Guided Video Diffusion Model Tailored for Colonoscopy
 
-**Maintainer**: Dr Giorgio Roffo, Head of AI at SARA  
-**SARA**: Strategic AI Research and Application Department  
+**Maintainer**: Dr Giorgio Roffo  
 **Official Repository**: [CUHK-AIM-Group/Endora](https://github.com/CUHK-AIM-Group/Endora#)  
 **Paper**: [Endora: Video Generation Models as Endoscopy Simulators (MICCAI 2024)](https://arxiv.org/abs/2403.11050)
 
@@ -280,5 +279,5 @@ This repository contains **educational and learning materials** for diffusion mo
 
 ---
 
-**Maintained by Dr Giorgio Roffo, Head of AI at SARA (Strategic AI Research and Application Department)**  
+**Maintained by Dr Giorgio Roffo**  
 *Advancing Medical AI through Diffusion Models*
