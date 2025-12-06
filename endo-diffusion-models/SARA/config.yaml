@@ -1,0 +1,94 @@
+# =============================================================================
+# ENDORA VIDEO GENERATION CONFIGURATION
+# =============================================================================
+# EndoDora: Image-conditioned, text-guided video diffusion model for colonoscopy
+# This file controls all aspects of video generation from seed images
+# 
+# USAGE:
+#   python generate_polyp_video.py --config config.yaml --ckpt model.pt --input_image image.jpg
+#
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# PATH CONFIGURATION
+# -----------------------------------------------------------------------------
+# Note: These paths are typically overridden by command-line arguments
+ckpt: # Model checkpoint path (overridden by --ckpt)
+save_img_path: "./SARA/results/col" # Output directory (overridden by --save_video_path)
+pretrained_model_path: # Additional pretrained model path (optional)
+
+# -----------------------------------------------------------------------------
+# MODEL ARCHITECTURE CONFIGURATION
+# -----------------------------------------------------------------------------
+model: EnDora-XL/2          # Model architecture: [EnDora-S/2, EnDora-B/2, EnDora-L/2, EnDora-XL/2]
+num_frames: 16              # Number of frames to generate (8-32 recommended)
+image_size: 128             # Input/output image resolution (64, 128, 256, 512)
+frame_interval: 2           # Temporal sampling interval (1-4, higher = more motion)
+fixed_spatial: False        # Fix spatial dimensions during generation
+attention_bias: True        # Use attention bias in transformer layers
+learn_sigma: True          # Learn noise prediction variance
+extras: 1                   # Extra conditioning [1=image, 2=class, 78=both]
+num_classes:                # Number of classes for class conditioning (optional)
+
+# -----------------------------------------------------------------------------
+# PERFORMANCE & OPTIMIZATION
+# -----------------------------------------------------------------------------
+# These settings are auto-detected based on available hardware
+use_compile: True           # Enable PyTorch compilation (faster inference)
+use_fp16: True              # Mixed precision: auto-detected (GPU=True, CPU=False)
+per_proc_batch_size: 4      # Batch size per process (adjusted based on GPU memory)
+
+# -----------------------------------------------------------------------------
+# SAMPLING CONFIGURATION
+# -----------------------------------------------------------------------------
+seed:                       # Random seed for reproducible generation (optional)
+sample_method: 'ddpm'       # Sampling method: ['ddpm', 'ddim', 'dpm_solver']
+num_sampling_steps: 250     # Denoising steps (50-1000, higher=better quality, slower)
+cfg_scale: 7.5              # Classifier-free guidance scale (1.0-20.0, higher=stronger conditioning)
+negative_name:              # Legacy negative conditioning (use negative_prompt instead)
+
+# -----------------------------------------------------------------------------
+# TEXT PROMPTING CONFIGURATION
+# -----------------------------------------------------------------------------
+# Enable text-guided video generation for enhanced control
+use_text_guidance: True     # Enable/disable text prompting
+prompt: "smooth camera movement, clear endoscopic view, natural lighting"
+                           # Positive prompt: describe desired video characteristics
+negative_prompt: "blurry, dark, artifacts, low quality"
+                           # Negative prompt: describe what to avoid
+
+# TEXT PROMPT EXAMPLES:
+# Medical/Clinical:
+#   - "slow withdrawal movement, clear mucosal visualization, steady illumination"
+#   - "smooth camera navigation, detailed surface inspection, clinical lighting"
+#   - "gentle scope movement, high contrast visualization, optimal exposure"
+#
+# Technical Quality:
+#   - "sharp focus, stable camera, consistent lighting, smooth motion"
+#   - "high definition, clear details, professional endoscopy, steady hands"
+#
+# Avoid (negative prompts):
+#   - "blurry, dark, shaky, artifacts, low quality, distorted, grainy"
+
+# -----------------------------------------------------------------------------
+# VIDEO OUTPUT CONFIGURATION
+# -----------------------------------------------------------------------------
+fps: 8                      # Output video frame rate (4-30 fps)
+video_quality: 9            # Video compression quality (1-10, 10=best quality)
+save_individual_frames: False # Save individual frames as images
+video_format: "mp4"         # Output format: ["mp4", "avi", "gif"]
+
+# -----------------------------------------------------------------------------
+# ADVANCED GENERATION PARAMETERS
+# -----------------------------------------------------------------------------
+# Fine-tune generation behavior for specific use cases
+temporal_coherence: 1.0     # Temporal consistency strength (0.1-2.0)
+motion_strength: 1.0        # Overall motion magnitude (0.1-2.0)
+conditioning_strength: 1.0  # Image conditioning strength (0.1-2.0)
+noise_schedule: "cosine"    # Noise schedule: ["linear", "cosine", "sqrt"]
+
+# -----------------------------------------------------------------------------
+# DISTRIBUTED SAMPLING (for multi-GPU setups)
+# -----------------------------------------------------------------------------
+num_fvd_samples: 3125       # Number of samples for FVD evaluation
+ddp_backend: "nccl"         # Distributed backend: ["nccl", "gloo"]

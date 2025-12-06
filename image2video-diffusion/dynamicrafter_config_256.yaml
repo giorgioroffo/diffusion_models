@@ -1,0 +1,147 @@
+# =============================================================================
+# DynamiCrafter 256x256 Model Configuration (FAST TESTING)
+# Optimized for quick prototyping and testing
+# Comprehensive parameter guide for customizing video generation effects
+# =============================================================================
+
+# Fast testing (6-20 seconds)
+# conda activate dynami5090
+# python dynamicrafter_generate.py dynamicrafter_config_256.yaml
+
+# MODEL CONFIGURATION - 256x256 (Fast)
+# These parameters control which model and resolution to use
+model:
+  size: 256  # Resolution: 256, 512, or 1024
+             # • 256: Fastest, good for testing and prototyping (6-20 seconds)
+             # • 512: Better quality, moderate speed (30-90 seconds)
+             # • 1024: Highest quality, slowest generation (2-5 minutes)
+  
+  checkpoint_path: "/ops/model_checkpoints/diffusion_models/dynamicrafter_model.ckpt"
+  # Path to model weights - must match the 'size' parameter above
+  
+  config_path: "configs/inference_256_v1.0.yaml"
+  # Model configuration file - must match the 'size' parameter:
+  # • 256: "configs/inference_256_v1.0.yaml"
+  # • 512: "configs/inference_512_v1.0.yaml" 
+  # • 1024: "configs/inference_1024_v1.0.yaml"
+
+# INPUT CONFIGURATION
+# These parameters control the source image and motion description
+input:
+  image_path: "sample_imgs/colonoscopy.jpg"
+  # Path to input image (PNG, JPG, JPEG supported)
+  
+  # PROMPT ENGINEERING FOR MOTION EFFECTS:
+  # Use these keywords to control motion type and intensity:
+  prompt: "colonoscopy view moving,camera navigate into the colon, no text, no watermarks, professional endoscopy"
+
+  # MOTION INTENSITY KEYWORDS:
+  # • SUBTLE: "gentle", "slow", "smooth", "gradual"
+  # • MODERATE: "moving", "flowing", "drifting", "panning"
+  # • DYNAMIC: "rapid", "fast", "rushing", "streaming"
+  # • EXTREME: "turbulent", "aggressive", "dramatic", "intense"
+  
+  # MOTION DIRECTION KEYWORDS:
+  # • FORWARD: "advancing", "diving", "pushing forward"
+  # • ROTATION: "rotating", "spinning", "spiraling", "swirling"
+  # • COMPLEX: "tumbling", "swooping", "barrel rolls", "multi-directional"
+  
+  # Alternative prompts for different effects:
+  # prompt: "endoscope diving deeper into colon, aggressive forward motion with spiraling rotation around polyp, tissue walls rushing by, cinematic medical exploration"
+  # prompt: "turbulent colonoscopy sequence, camera tumbling through intestinal passage, polyp spinning into view with complex multi-directional motion, dramatic medical cinematography"
+
+# OUTPUT CONFIGURATION
+output:
+  directory: "./gen_videos"  # Directory where generated videos will be saved
+  filename: "colonoscopy_256.mp4"  # Custom name for the generated video
+                                  # • Auto-adds .mp4 extension if missing
+                                  # • Video saved directly to main directory (not subfolder)
+                                  # • Examples: "my_video.mp4", "colonoscopy_test", "result_001.mp4"
+  fps: 8  # Frame rate of output video (higher = smoother but larger file)
+
+# GENERATION PARAMETERS - OPTIMIZED FOR 256 MODEL SPEED
+# These are the core parameters that control video generation behavior
+generation:
+  seed: 500  # Random seed for reproducibility
+             # • Same seed = identical results (useful for testing)
+             # • Change seed = different motion variations
+             # • Use -1 for random seed each time
+  
+  n_samples: 1  # Number of videos to generate
+                # • 1: Single video (recommended)
+                # • >1: Multiple variations with same settings
+  
+  batch_size: 1  # Processing batch size
+                 # • Keep at 1 unless you have very high-end GPU (RTX 4090+)
+                 # • Higher values = faster but more memory usage
+  
+  guidance_scale: 9.0  # How closely to follow the text prompt (CORRECTED)
+                       # • 1.0: No guidance (ignores prompt completely)
+                       # • 1.5-3.0: Weak guidance, very creative but may ignore prompt
+                       # • 5.0-7.5: Balanced following (standard range)
+                       # • 7.5-12.0: Strong prompt adherence (RECOMMENDED FOR 256)
+                       # • >12.0: Very rigid, may cause artifacts
+                       # NOTE: Default in code is 1.0, but configs use 7.5+
+  
+  ddim_steps: 100  # Denoising iterations (quality vs speed trade-off)
+                  # • 20-30: Fast but lower quality
+                  # • 40-50: Good balance for 256 model (recommended)
+                  # • 60-100: Highest quality but much slower
+  
+  ddim_eta: 0.5  # Sampling randomness (CORRECTED)
+                 # • 0.0: Fully deterministic (consistent, predictable)
+                 # • 0.1-0.5: Low randomness (subtle variations)
+                 # • 0.5-1.0: Balanced randomness (recommended)
+                 # • >1.0: High randomness (more chaotic, unpredictable motion)
+                 # NOTE: Higher values = MORE randomness, not less!
+  
+  video_length: 24  # Number of frames to generate (CORRECTED - watermarks are model-based)
+                    # • 8-16: Short clips, faster generation (good for 256)
+                    # • 16-32: Medium length (if you have time)  
+                    # • 32+: Longer videos (very slow for testing)
+                    # NOTE: Watermarks appear regardless of length - use LoRA fine-tuning to remove
+  
+  frame_stride: 4  # MOST IMPORTANT FOR MOTION INTENSITY (256 MODEL)
+                   # Controls temporal step size between frames
+                   # • 1: Minimal motion, slow/subtle changes
+                   # • 2-3: Gentle motion, smooth transitions  
+                   # • 4-5: Dynamic motion, noticeable changes (RECOMMENDED FOR 256)
+                   # • 6: Maximum motion, dramatic transformations
+                   # RECOMMENDATION: 3-5 for dynamic effects, 1-2 for subtle
+
+# ADVANCED SETTINGS - OPTIMIZED FOR 256 MODEL
+# These parameters fine-tune the generation process for specific effects
+advanced:
+  perframe_ae: false  # Per-frame autoencoder processing
+                      # • false: Faster, good for 256/512 models (RECOMMENDED FOR 256)
+                      # • true: Slower but better memory efficiency (for 1024 model)
+  
+  timestep_spacing: "uniform"  # Denoising schedule
+                               # • "uniform": Even steps (good for 256 model)
+                               # • "uniform_trailing": More steps at end (better for 512/1024)
+  
+  guidance_rescale: 0.0  # Classifier-free guidance rescaling
+                         # • 0.0: Standard guidance (256 model)
+                         # • 0.7: Enhanced guidance (512/1024 models)
+                         # • Higher values can improve prompt following but may cause artifacts
+
+# =============================================================================
+# 256 MODEL QUICK REFERENCE & SETTINGS GUIDE:
+# 
+# FOR SUBTLE MOTION:
+# frame_stride: 1-2, guidance_scale: 7.5, prompt: "gentle", "smooth"
+#
+# FOR DYNAMIC MOTION: 
+# frame_stride: 4-5, guidance_scale: 9.0-10.0, prompt: "rapid", "dramatic"
+#
+# FOR FAST TESTING:
+# ddim_steps: 30, video_length: 16, frame_stride: 3
+#
+# FOR BEST QUALITY (SLOW):
+# ddim_steps: 50, video_length: 32, frame_stride: 4, guidance_scale: 9.5
+#
+# GENERATION TIMES ON RTX 5090:
+# • Fast settings: ~6-10 seconds
+# • Balanced: ~10-20 seconds  
+# • Quality: ~20-40 seconds
+# =============================================================================

@@ -1,0 +1,86 @@
+# Additional requirements for DynamiCrafter LoRA Fine-tuning
+# Install these in addition to the main DynamiCrafter requirements
+
+# Core LoRA and PEFT libraries
+peft>=0.6.0                    # Parameter-Efficient Fine-Tuning library
+loralib>=0.1.1                 # LoRA implementation library
+
+# Enhanced PyTorch Lightning ecosystem
+pytorch-lightning>=2.0.0      # Latest PyTorch Lightning
+lightning-bolts>=0.7.0         # Additional utilities
+torchmetrics>=0.11.0          # Metrics for evaluation
+
+# Data processing and augmentation
+albumentations>=1.3.0          # Advanced image augmentations
+imageio>=2.31.0               # Video I/O
+imageio-ffmpeg>=0.4.8         # FFmpeg backend for video
+av>=10.0.0                    # PyAV for video processing
+decord>=0.6.0                 # Efficient video loader
+
+# Visualization and monitoring  
+tensorboard>=2.13.0           # TensorBoard for logging
+wandb>=0.15.0                 # Weights & Biases (optional)
+matplotlib>=3.7.0             # Plotting
+seaborn>=0.12.0               # Enhanced plotting
+
+# Configuration management
+hydra-core>=1.3.0             # Advanced configuration management
+hydra-colorlog>=1.2.0         # Colored logging for Hydra
+
+# Performance and optimization
+accelerate>=0.20.0            # Hugging Face acceleration library
+bitsandbytes>=0.41.0          # 8-bit optimizers (optional)
+deepspeed>=0.10.0             # DeepSpeed for large model training (optional)
+
+# Data science and analysis
+pandas>=2.0.0                 # Data manipulation
+scikit-learn>=1.3.0           # Machine learning utilities
+scipy>=1.10.0                 # Scientific computing
+
+# Utility libraries
+rich>=13.0.0                  # Rich text and beautiful formatting
+typer>=0.9.0                  # CLI interface builder
+click>=8.1.0                  # Command line interface
+tqdm>=4.65.0                  # Progress bars
+
+# Memory profiling and debugging
+memory-profiler>=0.61.0       # Memory usage profiling
+psutil>=5.9.0                 # System and process utilities
+py3nvml>=0.2.7                # NVIDIA GPU monitoring
+
+# Video quality assessment
+lpips>=0.1.4                  # Perceptual image similarity
+fvd-pytorch>=0.1.0            # Fréchet Video Distance (if available)
+
+# Model compression and optimization  
+torch-pruning>=1.2.0          # Neural network pruning (optional)
+onnx>=1.14.0                  # ONNX model export (optional)
+onnxruntime>=1.15.0           # ONNX runtime (optional)
+
+# Development and testing
+pytest>=7.4.0                # Testing framework
+pytest-cov>=4.1.0            # Coverage testing
+black>=23.0.0                 # Code formatting
+isort>=5.12.0                 # Import sorting
+flake8>=6.0.0                 # Linting
+
+# Documentation
+mkdocs>=1.5.0                 # Documentation generator (optional)
+mkdocs-material>=9.0.0        # Material theme for docs (optional)
+
+# Specific versions for compatibility
+transformers>=4.30.0          # Hugging Face transformers
+diffusers>=0.18.0             # Diffusion models library
+safetensors>=0.3.0            # Safe tensor serialization
+
+# Additional scientific computing
+networkx>=3.1.0               # Graph algorithms
+joblib>=1.3.0                 # Parallel computing
+numba>=0.57.0                 # JIT compilation (optional)
+
+# GPU memory management
+py-spy>=0.3.14                # Sampling profiler (optional)
+nvidia-ml-py>=11.525.0        # NVIDIA GPU monitoring
+
+# Note: Some packages may not be available on all platforms
+# Install what's needed for your specific use case

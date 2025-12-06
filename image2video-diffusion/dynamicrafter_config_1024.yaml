@@ -1,0 +1,159 @@
+# =============================================================================
+# DynamiCrafter 1024x1024 Model Configuration (HIGH QUALITY)
+# Optimized for production-quality video generation
+# Comprehensive parameter guide for customizing video generation effects
+# =============================================================================
+
+
+# High quality production (2-5 minutes)  
+# conda activate dynami5090
+# python dynamicrafter_generate.py dynamicrafter_config_1024.yaml
+
+# MODEL CONFIGURATION - 1024x1024 (High Quality)
+# These parameters control which model and resolution to use
+model:
+  size: 1024  # Resolution: 256, 512, or 1024
+              # • 256: Fastest, good for testing and prototyping (6-20 seconds)
+              # • 512: Better quality, moderate speed (30-90 seconds)
+              # • 1024: Highest quality, slowest generation (2-5 minutes)
+  
+  checkpoint_path: "/ops/model_checkpoints/diffusion_models/dynamicrafter_1024_model.ckpt"
+  # Path to model weights - must match the 'size' parameter above
+  
+  config_path: "configs/inference_1024_v1.0.yaml"
+  # Model configuration file - must match the 'size' parameter:
+  # • 256: "configs/inference_256_v1.0.yaml"
+  # • 512: "configs/inference_512_v1.0.yaml" 
+  # • 1024: "configs/inference_1024_v1.0.yaml"
+
+# INPUT CONFIGURATION
+# These parameters control the source image and motion description
+input:
+  image_path: "sample_imgs/large_polyp.jpg"
+  # Path to input image (PNG, JPG, JPEG supported)
+  
+  # PROMPT ENGINEERING FOR MOTION EFFECTS (1024 MODEL):
+  # Use detailed, cinematic language for high-quality results:
+  prompt: "colonoscopy video, clean medical footage, no text, no watermarks, professional endoscopy quality"
+  
+  # MOTION INTENSITY KEYWORDS FOR 1024:
+  # • SUBTLE: "gentle", "slow", "smooth", "gradual", "elegant"
+  # • MODERATE: "moving", "flowing", "drifting", "panning", "sophisticated"
+  # • DYNAMIC: "rapid", "fast", "rushing", "streaming", "dramatic"
+  # • EXTREME: "turbulent", "aggressive", "intense", "cinematic", "professional"
+  
+  # MOTION DIRECTION KEYWORDS FOR 1024:
+  # • FORWARD: "advancing", "diving", "pushing forward", "exploring"
+  # • ROTATION: "rotating", "spinning", "spiraling", "swirling", "orbiting"
+  # • COMPLEX: "tumbling", "swooping", "barrel rolls", "multi-directional", "dynamic camera work"
+  
+  # QUALITY ENHANCERS FOR 1024:
+  # • "photorealistic", "ultra-realistic", "high-definition", "cinematic"
+  # • "professional", "sophisticated", "detailed textures", "realistic lighting"
+  
+  # Alternative high-quality prompts:
+  # prompt: "professional endoscopic sequence, sophisticated camera dynamics diving through colon, elegant rotation around polyp with cinematic lighting and realistic tissue movement"
+  # prompt: "high-definition colonoscopy navigation, complex multi-directional camera motion, dramatic perspective shifts around polyp, ultra-realistic mucosal surface details"
+
+# OUTPUT CONFIGURATION
+output:
+  directory: "./gen_videos"  # Directory where generated videos will be saved
+  filename: "polyp_hq_1024.mp4"  # Custom name for the generated video
+                                 # • Auto-adds .mp4 extension if missing
+                                 # • Video saved directly to main directory (not subfolder)
+                                 # • Examples: "hq_video.mp4", "colonoscopy_cinematic", "production_001.mp4"
+  fps: 8  # Frame rate of output video (higher = smoother but larger file)
+
+# GENERATION PARAMETERS - OPTIMIZED FOR 1024 MODEL QUALITY
+# These are the core parameters that control video generation behavior
+generation:
+  seed: 123  # Random seed for reproducibility
+             # • Same seed = identical results (useful for comparing settings)
+             # • Change seed = different motion variations
+             # • Use -1 for random seed each time
+  
+  n_samples: 1  # Number of videos to generate
+                # • 1: Single video (recommended for 1024 due to time)
+                # • >1: Multiple variations (WARNING: very slow for 1024)
+  
+  batch_size: 1  # Processing batch size
+                 # • MUST stay at 1 for 1024 model (memory limitations)
+                 # • Higher values will cause OOM errors
+  
+  guidance_scale: 10.0  # How closely to follow the text prompt
+                        # • 7.5-9.0: Balanced following with creativity
+                        # • 9.0-11.0: Strong prompt adherence (RECOMMENDED FOR 1024)
+                        # • 11.0-15.0: Very strict following (may reduce natural motion)
+                        # • >15.0: Overly rigid, may cause artifacts
+                        # RECOMMENDATION FOR 1024: 9.5-11.0 for best quality
+  
+  ddim_steps: 60  # Denoising iterations (quality vs speed trade-off)
+                  # • 40-50: Faster but reduced quality
+                  # • 50-60: Excellent balance for 1024 model (RECOMMENDED)
+                  # • 60-80: Maximum quality but very slow
+                  # • >80: Diminishing returns, not recommended
+  
+  ddim_eta: 1.0  # Sampling randomness
+                 # • 0.0: Deterministic (consistent but may lack variety)
+                 # • 0.7-1.0: Balanced randomness (RECOMMENDED FOR 1024)
+                 # • >1.0: High randomness (more chaotic, use carefully)
+  
+  video_length: 28  # Number of frames to generate (keep below 30 to avoid watermarks)
+                    # • 16-24: Shorter clips, reasonable generation time
+                    # • 24-32: Medium length, good for showcasing (RECOMMENDED)
+                    # • 32-48: Longer videos (WARNING: very slow, 5+ minutes)
+                    # NOTE: 1024 model time scales exponentially with frames
+  
+  frame_stride: 28  # MOST IMPORTANT FOR MOTION INTENSITY (1024 MODEL)
+                    # For 1024 model: Controls FPS and motion (different behavior than 256)
+                    # • 8-16: Slow motion, subtle changes, smooth
+                    # • 16-24: Medium speed, balanced motion
+                    # • 24-32: Fast motion, dynamic changes (RECOMMENDED FOR 1024)
+                    # • 32-40: Very fast motion, dramatic transformations
+                    # • >40: Extreme motion (may become chaotic)
+                    # RECOMMENDATION: 24-32 for dynamic effects, 12-20 for subtle
+
+# ADVANCED SETTINGS - OPTIMIZED FOR 1024 MODEL
+# These parameters fine-tune the generation process for high-resolution
+advanced:
+  perframe_ae: true  # Per-frame autoencoder processing
+                     # • false: Faster but may cause OOM on 1024 model
+                     # • true: Essential for 1024 model memory efficiency (REQUIRED)
+                     # • Processes frames individually to save GPU memory
+  
+  timestep_spacing: "uniform_trailing"  # Denoising schedule
+                                        # • "uniform": Even steps (good for 256 model)
+                                        # • "uniform_trailing": More steps at end (BETTER FOR 1024)
+                                        # • Improves fine detail generation
+  
+  guidance_rescale: 0.7  # Classifier-free guidance rescaling
+                         # • 0.0: Standard guidance (256 model)
+                         # • 0.7: Enhanced guidance (RECOMMENDED FOR 1024)
+                         # • 0.5-0.9: Fine-tune prompt following vs naturalness
+                         # • >1.0: May cause over-saturation or artifacts
+
+# =============================================================================
+# 1024 MODEL QUICK REFERENCE & SETTINGS GUIDE:
+# 
+# FOR SUBTLE MOTION:
+# frame_stride: 12-16, guidance_scale: 7.5-9.0, prompt: "gentle", "elegant", "sophisticated"
+#
+# FOR DYNAMIC MOTION: 
+# frame_stride: 24-32, guidance_scale: 9.5-11.0, prompt: "dramatic", "cinematic", "dynamic"
+#
+# FOR FAST TESTING:
+# ddim_steps: 40, video_length: 16, frame_stride: 20, perframe_ae: true
+#
+# FOR MAXIMUM QUALITY (PRODUCTION):
+# ddim_steps: 60, video_length: 32, frame_stride: 28, guidance_scale: 10.0, guidance_rescale: 0.7
+#
+# GENERATION TIMES ON RTX 5090:
+# • Fast settings: ~1-2 minutes
+# • Balanced: ~2-4 minutes  
+# • Maximum quality: ~4-8 minutes
+#
+# MEMORY REQUIREMENTS:
+# • CRITICAL: perframe_ae: true (prevents OOM errors)
+# • Keep batch_size: 1 (higher will crash)
+# • Monitor GPU memory usage
+# =============================================================================

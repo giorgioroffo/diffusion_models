@@ -1,0 +1,248 @@
+# =============================================================================
+# DynamiCrafter LoRA Fine-tuning Configuration
+# Configuration for fine-tuning DynamiCrafter with LoRA on clean colonoscopy data
+# =============================================================================
+# conda activate dynami5090
+
+# MODEL CONFIGURATION
+model:
+  target: lvdm.models.ddpm3d.LatentVisualDiffusion
+  params:
+    # Diffusion parameters
+    linear_start: 0.00085
+    linear_end: 0.012
+    num_timesteps_cond: 1
+    timesteps: 1000
+    first_stage_key: video
+    cond_stage_key: caption
+    cond_stage_trainable: false
+    conditioning_key: hybrid
+    image_size: [32, 32]  # For 256x256 model
+    channels: 4
+    scale_by_std: false
+    scale_factor: 0.18215
+    use_ema: false
+    uncond_type: 'empty_seq'
+    
+    # UNet configuration
+    unet_config:
+      target: lvdm.modules.networks.openaimodel3d.UNetModel
+      params:
+        in_channels: 8
+        out_channels: 4
+        model_channels: 320
+        attention_resolutions: [4, 2, 1]
+        num_res_blocks: 2
+        channel_mult: [1, 2, 4, 4]
+        dropout: 0.1
+        num_head_channels: 64
+        transformer_depth: 1
+        context_dim: 1024
+        use_linear: true
+        use_checkpoint: true
+        temporal_conv: true
+        temporal_attention: true
+        temporal_selfatt_only: true
+        use_relative_position: false
+        use_causal_attention: false
+        temporal_length: 16
+        addition_attention: true
+        image_cross_attention: true
+        image_cross_attention_scale_learnable: true
+        default_fs: 3
+        fs_condition: true
+
+    # First stage config (VAE)
+    first_stage_config:
+      target: lvdm.models.autoencoder.AutoencoderKL
+      params:
+        embed_dim: 4
+        monitor: val/rec_loss
+        ddconfig:
+          double_z: true
+          z_channels: 4
+          resolution: 256
+          in_channels: 3
+          out_ch: 3
+          ch: 128
+          ch_mult: [1, 2, 4, 4]
+          num_res_blocks: 2
+          attn_resolutions: []
+          dropout: 0.0
+        lossconfig:
+          target: torch.nn.Identity
+
+    # Text conditioning config
+    cond_stage_config:
+      target: lvdm.modules.encoders.condition.FrozenOpenCLIPEmbedder
+      params:
+        freeze: true
+        layer: "penultimate"
+
+    # Image conditioning config  
+    img_cond_stage_config:
+      target: lvdm.modules.encoders.condition.FrozenOpenCLIPImageEmbedderV2
+      params:
+        freeze: true
+        layer: "penultimate"
+
+# LORA CONFIGURATION
+lora:
+  # LoRA hyperparameters
+  rank: 16                    # LoRA rank (4, 8, 16, 32, 64)
+  alpha: 32.0                # LoRA alpha scaling factor
+  dropout: 0.1               # LoRA dropout rate
+  
+  # Target modules for LoRA adaptation
+  target_modules:
+    - "to_q"                 # Query projections in attention
+    - "to_k"                 # Key projections in attention  
+    - "to_v"                 # Value projections in attention
+    - "to_out"               # Output projections in attention
+    - "to_k_ip"              # Image cross-attention keys
+    - "to_v_ip"              # Image cross-attention values
+    - "proj_in"              # Input projections in transformer blocks
+    - "proj_out"             # Output projections in transformer blocks
+  
+  # Modules to exclude from LoRA (if needed)
+  exclude_modules: []
+
+# DATA CONFIGURATION  
+data:
+  # Dataset paths
+  data_root: "/ops/datasets/colonoscopy"
+  
+  # Video parameters
+  video_length: 16           # Number of frames per sequence
+  resolution: 256            # Video resolution (HxW)
+  frame_stride: 1            # Stride between sampled frames
+  
+  # Training parameters
+  batch_size: 4              # Batch size (adjust based on GPU memory)
+  num_workers: 4             # Number of data loading workers
+  
+  # Data filtering
+  clean_prompts_only: true   # Only use watermark-free descriptions
+  min_video_frames: 32       # Minimum video length in frames
+  
+  # Data augmentation (optional)
+  horizontal_flip_prob: 0.5  # Probability of horizontal flip
+  color_jitter_prob: 0.3     # Probability of color jittering
+  
+# TRAINING CONFIGURATION
+training:
+  # Optimizer settings
+  learning_rate: 1.0e-4      # Learning rate for LoRA parameters
+  weight_decay: 1.0e-6       # Weight decay for regularization
+  beta1: 0.9                 # Adam beta1
+  beta2: 0.999               # Adam beta2
+  
+  # Learning rate scheduling
+  warmup_steps: 1000         # Number of warmup steps
+  scheduler: "cosine"        # Learning rate scheduler type
+  min_lr_ratio: 0.01         # Minimum LR as ratio of max LR
+  
+  # Training limits
+  max_epochs: 100            # Maximum number of epochs
+  max_steps: 50000           # Maximum number of training steps
+  
+  # Validation
+  val_check_interval: 0.25   # Validate every 25% of epoch
+  val_check_epochs: 1        # Validate every N epochs
+  
+  # Gradient settings
+  gradient_clip_val: 1.0     # Gradient clipping value
+  accumulate_grad_batches: 1 # Gradient accumulation steps
+  
+  # Checkpointing
+  save_top_k: 3              # Keep top K checkpoints
+  save_last: true            # Save last checkpoint
+  monitor_metric: "val_loss" # Metric to monitor for best checkpoint
+  
+  # Early stopping
+  early_stopping_patience: 10 # Epochs to wait before early stopping
+  early_stopping_min_delta: 0.001 # Minimum change to qualify as improvement
+
+# HARDWARE CONFIGURATION
+hardware:
+  # GPU settings
+  gpus: 1                    # Number of GPUs to use
+  precision: "16-mixed"      # Training precision (16-mixed, 32, bf16-mixed)
+  
+  # Memory optimization
+  use_cpu_offload: false     # Offload to CPU when possible
+  pin_memory: true           # Pin memory for faster data transfer
+  
+  # Performance
+  benchmark: true            # Enable cudnn benchmark for speed
+  deterministic: false       # Set to true for reproducible results
+
+# OUTPUT CONFIGURATION
+output:
+  # Directories
+  output_dir: "./lora_checkpoints"           # Main output directory
+  experiment_name: "dynamicrafter_colonoscopy_lora" # Experiment name
+  
+  # Logging
+  log_every_n_steps: 50      # Log metrics every N steps
+  save_images_every_n_epochs: 5 # Save sample images every N epochs
+  
+  # TensorBoard logging
+  enable_tensorboard: true   # Enable TensorBoard logging
+  tensorboard_dir: "./logs"  # TensorBoard log directory
+
+# INFERENCE CONFIGURATION (for validation/testing)
+inference:
+  # Generation parameters
+  num_inference_steps: 50    # Number of denoising steps
+  guidance_scale: 7.5        # Classifier-free guidance scale
+  eta: 1.0                   # DDIM eta parameter
+  
+  # Output settings
+  save_videos: true          # Save generated videos during validation
+  video_fps: 8               # FPS for saved videos
+  
+  # Validation prompts
+  validation_prompts:
+    - "clean colonoscopy examination showing healthy mucosa"
+    - "endoscopic view of colon with clear visualization"  
+    - "medical colonoscopy procedure without watermarks"
+    - "colonoscopy video with natural tissue appearance"
+    - "clear endoscopic footage of intestinal wall"
+
+# SPECIAL SETTINGS FOR COLONOSCOPY DOMAIN
+domain_adaptation:
+  # Medical terminology enhancement
+  medical_vocab_boost: 1.2   # Boost factor for medical terms
+  
+  # Watermark elimination
+  anti_watermark_terms:      # Terms to avoid in generation
+    - "shutterstock"
+    - "watermark" 
+    - "preview"
+    - "sample"
+    - "getty"
+    - "stock"
+    - "logo"
+  
+  # Medical quality enhancement
+  quality_terms:             # Terms to emphasize for quality
+    - "clean"
+    - "clear"
+    - "medical"
+    - "clinical"
+    - "diagnostic"
+    - "professional"
+
+# =============================================================================
+# USAGE NOTES:
+#
+# 1. PATHS: Update data_root to point to your colonoscopy dataset
+# 2. HARDWARE: Adjust batch_size and gpus based on your hardware
+# 3. LORA: Start with rank=16, increase if needed for better adaptation
+# 4. LEARNING RATE: 1e-4 is a good starting point, decrease if unstable
+# 5. VALIDATION: Monitor val_loss and sample quality regularly
+#
+# COMMAND TO RUN:
+# python train_lora.py --config config_lora.yaml --checkpoint /ops/model_checkpoints/diffusion_models/dynamicrafter_model.ckpt
+# =============================================================================

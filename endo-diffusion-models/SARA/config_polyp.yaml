@@ -1,0 +1,70 @@
+# =============================================================================
+# SINGLE POLYP INSPECTION CONFIGURATION
+# =============================================================================
+# Optimized for detailed polyp examination from multiple angles
+# Focus: Detailed visualization and morphological assessment
+
+# -----------------------------------------------------------------------------
+# PATH CONFIGURATION  
+# -----------------------------------------------------------------------------
+ckpt: # Model checkpoint path (overridden by --ckpt)
+save_img_path: "./SARA/results/polyp" 
+pretrained_model_path: 
+
+# -----------------------------------------------------------------------------
+# MODEL ARCHITECTURE CONFIGURATION
+# -----------------------------------------------------------------------------
+model: EnDora-XL/2          
+num_frames: 16              # Fixed to match checkpoint architecture
+image_size: 128             # Fixed to match checkpoint architecture
+frame_interval: 2           
+fixed_spatial: False        
+attention_bias: True        
+learn_sigma: True          
+extras: 1                   
+num_classes:                
+
+# -----------------------------------------------------------------------------
+# PERFORMANCE & OPTIMIZATION
+# -----------------------------------------------------------------------------
+use_compile: True           
+use_fp16: True              
+per_proc_batch_size: 4      
+
+# -----------------------------------------------------------------------------
+# SAMPLING CONFIGURATION
+# -----------------------------------------------------------------------------
+seed: 123                   # Fixed seed for reproducible polyp inspection
+sample_method: 'ddpm'       
+num_sampling_steps: 400     # High steps for detailed features
+cfg_scale: 12.0             # Very strong guidance to enforce first frame consistency
+negative_name:              
+
+# -----------------------------------------------------------------------------
+# SINGLE POLYP CONTENT PROMPTS
+# -----------------------------------------------------------------------------
+use_text_guidance: True     
+prompt: "the first frame must be the current image. stay coherent with input image, show exact same polyp, maintain same polyp shape and position"
+negative_prompt: "different polyp, changed shape, new lesions, artifacts, blurry"
+
+# -----------------------------------------------------------------------------
+# VIDEO OUTPUT CONFIGURATION
+# -----------------------------------------------------------------------------
+fps: 9                      # Deliberate pace for examination
+video_quality: 10           
+save_individual_frames: False 
+video_format: "mp4"         
+
+# -----------------------------------------------------------------------------
+# ADVANCED GENERATION PARAMETERS
+# -----------------------------------------------------------------------------
+temporal_coherence: 1.3     # High coherence for polyp consistency
+motion_strength: 0.7        # Gentle, controlled movement
+conditioning_strength: 1.5  # Maximum image conditioning to enforce first frame
+noise_schedule: "cosine"    
+
+# -----------------------------------------------------------------------------
+# DISTRIBUTED SAMPLING
+# -----------------------------------------------------------------------------
+num_fvd_samples: 3125       
+ddp_backend: "nccl"         

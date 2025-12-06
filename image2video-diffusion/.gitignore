@@ -1,0 +1,166 @@
+# =============================================================================
+# DynamiCrafter .gitignore
+# Excludes large files, model checkpoints, generated content, and temp files
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyTorch
+*.pth
+*.pt
+*.bin
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+conda-meta/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# PROJECT SPECIFIC - Large Files & Directories
+# =============================================================================
+
+# Model checkpoints and weights (VERY LARGE - 9.8GB+)
+checkpoints/
+*.ckpt
+*.safetensors
+model_weights/
+pretrained_models/
+
+# Generated content and outputs
+
+results/
+outputs/
+generated/
+samples/
+inference_results/
+
+# Large installation files
+miniconda.sh
+anaconda.sh
+*.tar.gz
+*.zip
+*.7z
+
+# Backup and log directories
+backup/
+logs/
+LOG/
+*.log
+
+# Custom project directories
+.dyn/
+.section_results/
+experiments/
+runs/
+
+# Temporary and cache files
+tmp/
+temp/
+cache/
+.cache/
+*.tmp
+
+# Large media files (if not needed for documentation)
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+*.webm
+
+# Large images (keep only necessary ones)
+*.tiff
+*.tif
+*.bmp
+*.raw
+*.nef
+*.cr2
+*.dng
+
+# Data directories
+data/
+datasets/
+dataset/
+
+# Weights and Biases
+wandb/
+
+# MLflow
+mlruns/
+
+# TensorBoard
+runs/
+tensorboard/
+
+# Hugging Face cache
+.cache/huggingface/
+
+# Misc large files
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+core.*
