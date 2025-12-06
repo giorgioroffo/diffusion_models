@@ -1,7 +1,7 @@
 
 # Image-to-Video Diffusion Model
 
-**Maintained by:** Dr Giorgio Roffo, Head of AI at SARA (Strategic AI Research and Application Department)
+**Maintained by:** Dr Giorgio Roffo
 
 ## Overview
 
@@ -450,7 +450,7 @@ Roffo, G. (2025). A Survey of Large Language Models: Foundations and Future Dire
 - [AK(@_akhaliq)](https://twitter.com/_akhaliq?lang=en) for Hugging Face demo setup
 - [camenduru](https://twitter.com/camenduru) for Replicate & Colab demos
 - [Xinliang](https://github.com/dailingx) for open source contributions
-- **[Dr Giorgio Roffo](https://www.linkedin.com/in/giorgio-roffo/)**, Head of AI at SARA (Strategic AI Research and Application Department), for contributions to this implementation
+- **[Dr Giorgio Roffo](https://www.linkedin.com/in/giorgio-roffo/)** for contributions to this implementation
 
 ---
 
